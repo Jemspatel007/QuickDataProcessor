@@ -39,7 +39,7 @@ steps:
       - '--role=roles/run.invoker'
 
 images:
-  - 'us-central1-docker.pkg.dev/serverless-440117/qdp-frontend'
+  - 'us-central1-docker.pkg.dev/qdpserveless/serverless/frontend02:latest'
 
 
 
