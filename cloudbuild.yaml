@@ -25,7 +25,7 @@ steps:
       - 'us-central1'
       - '--allow-unauthenticated'
 
-  # Step 4: Grant public access to the Cloud Run service
+  # Step 4: Grant public access to the Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
