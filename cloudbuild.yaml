@@ -3,12 +3,12 @@ options:
 
 steps:
   # Step 1: Build the Docker image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/serverless-440117/qdp-frontend:latest', '.']
+  - name: 'gcr.io/cloud-builders/docker'    
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/serverless-440117/qdp-frontend/frontend:latest', '.']
   
   # Step 2: Push the image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-central1-docker.pkg.dev/serverless-440117/qdp-frontend:latest']
+    args: ['push', 'us-central1-docker.pkg.dev/serverless-440117/qdp-frontend/frontend:latest']
   
   # Step 3: Deploy the image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -18,7 +18,7 @@ steps:
       - 'deploy'
       - 'frontend-service'
       - '--image'
-      - 'us-central1-docker.pkg.dev/serverless-440117/qdp-frontend:latest'
+      - 'us-central1-docker.pkg.dev/serverless-440117/qdp-frontend/frontend:latest'
       - '--platform'
       - 'managed'
       - '--region'
@@ -39,4 +39,4 @@ steps:
       - '--role=roles/run.invoker'
 
 images:
-  - 'us-central1-docker.pkg.dev/serverless-440117/qdp-frontend:latest'
+  - 'us-central1-docker.pkg.dev/serverless-440117/qdp-frontend/frontend:latest'
