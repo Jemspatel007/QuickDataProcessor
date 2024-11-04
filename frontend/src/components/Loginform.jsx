@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +9,8 @@ const LoginForm = () => {
   const [mathAnswer, setMathAnswer] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
   const [mathQuestion, setMathQuestion] = useState(generateMathQuestion());
+  const [securityQuestion, setSecurityQuestion] = useState(""); 
+  const [correctSecurityAnswer, setCorrectSecurityAnswer] = useState(""); // Store correct security answer
 
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
@@ -30,30 +32,48 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const baseUrl = import.meta.env.VITE_BASE_URL;
+    const baseUrl = process.env.REACT_APP_API_URL;
 
     if (currentStep === 1) {
-      const apiUrl = `${baseUrl}/api/auth/login`;
+      const apiUrl = `${baseUrl}/dev/auth/getSecurityQuestions`;
       const formData = { email, password };
+      console.log("Formdata", formData);
       try {
-        await axios.post(apiUrl, formData);
-        setCurrentStep(2);
+        const response = await axios.post(apiUrl, formData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log("res", response);
+
+        const parsedBody = response.data.body;
+        console.log("pas", parsedBody);
+        if (response.data.statusCode === 200) {
+          toast.success("Correct Username and Password");
+          setSecurityQuestion(parsedBody.securityQuestion);
+          setCorrectSecurityAnswer(parsedBody.answer); // Set the correct answer from response
+          setCurrentStep(2);
+        } else {
+          toast.error("Incorrect Username or Password");
+        }
       } catch (error) {
-        console.error("Login failed:", error);
+        console.error("Error making POST request:", error);
       }
     } else if (currentStep === 2) {
-      const securityApiUrl = `${baseUrl}/api/auth/validate-security`;
-      try {
-        await axios.post(securityApiUrl, { email, answer: securityAnswer });
+      // Verify the security answer without an API call
+      if (securityAnswer === correctSecurityAnswer) {
         setCurrentStep(3);
-      } catch (error) {
-        console.error("Security question validation failed:", error);
+        toast.success("Security answer verified!");
+      } else {
+        toast.error("Incorrect security answer. Please try again.");
       }
     } else if (currentStep === 3) {
       if (validateMathAnswer()) {
         console.log("All validations passed!");
+        toast.success("Login successful!");
       } else {
         console.error("Math answer is incorrect");
+        toast.error("Math answer is incorrect");
       }
     }
   };
@@ -119,13 +139,11 @@ const LoginForm = () => {
           <>
             <div className="form-control mb-6">
               <label className="label">
-                <span className="label-text text-md font-bold">
-                  Security Question
-                </span>
+                <span className="label-text text-md font-bold">{securityQuestion}</span>
               </label>
               <input
                 type="text"
-                placeholder="What was the name of your first pet?"
+                placeholder="Your answer"
                 className="input input-bordered"
                 required
                 value={securityAnswer}
@@ -144,14 +162,11 @@ const LoginForm = () => {
           <>
             <div className="form-control mb-6">
               <label className="label">
-                <span className="label-text text-md font-bold">
-                  Math Question
-                </span>
+                <span className="label-text text-md font-bold">Math Question</span>
               </label>
               <div className="flex items-center space-x-2">
                 <span className="text-lg font-semibold">
-                  {mathQuestion.num1} {mathQuestion.operator}{" "}
-                  {mathQuestion.num2} =
+                  {mathQuestion.num1} {mathQuestion.operator} {mathQuestion.num2} =
                 </span>
                 <input
                   type="number"
