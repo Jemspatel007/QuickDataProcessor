@@ -12,8 +12,8 @@ const RegistrationForm = () => {
     securityQuestion2: "",
     answer1: "",
     answer2: "",
-    mathAnswer: "", // State for math answer
-    role: "Customer", // Default role
+    mathAnswer: "", 
+    role: "Customer", 
   });
 
   const [securityQuestions] = useState([
@@ -325,7 +325,7 @@ const RegistrationForm = () => {
         >
           <option value="">Select a question</option>
           {securityQuestions
-            .filter((question) => question !== formData.securityQuestion1) // Exclude the first question
+            .filter((question) => question !== formData.securityQuestion1) 
             .map((question, index) => (
               <option key={index} value={question}>
                 {question}

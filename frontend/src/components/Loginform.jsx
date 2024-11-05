@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom"; 
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -10,7 +11,8 @@ const LoginForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [mathQuestion, setMathQuestion] = useState(generateMathQuestion());
   const [securityQuestion, setSecurityQuestion] = useState(""); 
-  const [correctSecurityAnswer, setCorrectSecurityAnswer] = useState(""); // Store correct security answer
+  const [correctSecurityAnswer, setCorrectSecurityAnswer] = useState(""); 
+  const navigate = useNavigate(); 
 
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
@@ -51,7 +53,7 @@ const LoginForm = () => {
         if (response.data.statusCode === 200) {
           toast.success("Correct Username and Password");
           setSecurityQuestion(parsedBody.securityQuestion);
-          setCorrectSecurityAnswer(parsedBody.answer); // Set the correct answer from response
+          setCorrectSecurityAnswer(parsedBody.answer); 
           setCurrentStep(2);
         } else {
           toast.error("Incorrect Username or Password");
@@ -60,7 +62,6 @@ const LoginForm = () => {
         console.error("Error making POST request:", error);
       }
     } else if (currentStep === 2) {
-      // Verify the security answer without an API call
       if (securityAnswer === correctSecurityAnswer) {
         setCurrentStep(3);
         toast.success("Security answer verified!");
@@ -69,8 +70,30 @@ const LoginForm = () => {
       }
     } else if (currentStep === 3) {
       if (validateMathAnswer()) {
-        console.log("All validations passed!");
-        toast.success("Login successful!");
+        const apiUrl = `${baseUrl}/dev/auth/login`; 
+        try {
+          const response = await axios.post(apiUrl, { email, password });
+          
+          const token = response.data.body.token 
+          if (token) {
+            localStorage.setItem("token", token);
+            toast.success("Login successful!");
+            navigate("/home"); 
+          } else {
+            toast.error("Login failed. No token returned.");
+          }
+        } catch (error) {
+          if (error.response) {
+            console.error("Error response:", error.response.data);
+            toast.error(error.response.data.message || "Login failed. Please try again.");
+          } else if (error.request) {
+            console.error("Error request:", error.request);
+            toast.error("No response from the server. Please try again later.");
+          } else {
+            console.error("Error message:", error.message);
+            toast.error("An error occurred. Please try again.");
+          }
+        }
       } else {
         console.error("Math answer is incorrect");
         toast.error("Math answer is incorrect");
