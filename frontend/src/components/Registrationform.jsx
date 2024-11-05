@@ -12,8 +12,8 @@ const RegistrationForm = () => {
     securityQuestion2: "",
     answer1: "",
     answer2: "",
-    mathAnswer: "", // State for math answer
-    role: "Customer", // Default role
+    mathAnswer: "", 
+    role: "Customer", 
   });
 
   const [securityQuestions] = useState([
@@ -152,18 +152,18 @@ const RegistrationForm = () => {
       emailIdField &&
       passwordField &&
       confirmPasswordField &&
-      mathField &&
-      formValidity.questionField
+      mathField 
     ) {
-      const apiUrl = `${import.meta.env.VITE_BASE_URL}/api/auth/register`;
+      const baseUrl = process.env.REACT_APP_API_URL;
+      const apiUrl = `${baseUrl}/dev/auth/register`;
       axios
         .post(apiUrl, formData)
         .then((response) => {
-          if (response.data.success) {
-            toast.success(response.data.message);
-            // Navigate or close modal as needed
+          const parsedBody = JSON.parse(response.data.body)
+          if (response.data.statusCode===201) {
+            toast.success(parsedBody.message);
           } else {
-            toast.error(response.data.message);
+            toast.error(parsedBody.message);
           }
         })
         .catch((error) => {
@@ -325,7 +325,7 @@ const RegistrationForm = () => {
         >
           <option value="">Select a question</option>
           {securityQuestions
-            .filter((question) => question !== formData.securityQuestion1) // Exclude the first question
+            .filter((question) => question !== formData.securityQuestion1) 
             .map((question, index) => (
               <option key={index} value={question}>
                 {question}
