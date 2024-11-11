@@ -148,20 +148,26 @@ const RegistrationForm = () => {
       setFormValidity((prev) => ({ ...prev, questionField: true }));
     }
 
-    if (
-      emailIdField &&
-      passwordField &&
-      confirmPasswordField &&
-      mathField 
-    ) {
+    if (emailIdField && passwordField && confirmPasswordField && mathField) {
       const baseUrl = process.env.REACT_APP_API_URL;
       const apiUrl = `${baseUrl}/dev/auth/register`;
+    
       axios
         .post(apiUrl, formData)
         .then((response) => {
-          const parsedBody = JSON.parse(response.data.body)
-          if (response.data.statusCode===201) {
+          const parsedBody = JSON.parse(response.data.body);
+          if (response.data.statusCode === 201) {
             toast.success(parsedBody.message);
+            const apiUrlSns = `${baseUrl}/dev/sns/CreateTopic`;
+            axios
+              .post(apiUrlSns, { email: formData.emailId })
+              .then(() => {
+                toast.success("SNS Topic created successfully.");
+              })
+              .catch((error) => {
+                console.error("Error creating SNS Topic:", error);
+              });
+    
           } else {
             toast.error(parsedBody.message);
           }
@@ -169,7 +175,7 @@ const RegistrationForm = () => {
         .catch((error) => {
           console.error("Error making POST request:", error);
         });
-    }
+    }    
   };
 
   return (
