@@ -1,9 +1,44 @@
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 
 const Header = () => {
+
+  const navigate = useNavigate();
+
+  const onLogout = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("No token found in local storage");
+      return;
+    }
+    const baseUrl = process.env.REACT_APP_API_URL;
+    try {
+      const apiUrl = `${baseUrl}/dev/auth/logout`;
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ token })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        console.error("Logout failed:", data.message || "Unknown error");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error.message);
+    }
+  };
+
   return (
     <>
       
@@ -28,7 +63,7 @@ const Header = () => {
                 className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52" 
               >
                 <li>
-                  <a className="flex items-center text-black"> 
+                  <a onClick={onLogout} className="flex items-center text-black"> 
                     <FontAwesomeIcon icon={faSignOutAlt} className="mr-2 text-red-500" />
                     Logout
                   </a>
