@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom"; 
+import { useAuth } from "../context/AuthContext";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ const LoginForm = () => {
   const [securityQuestion, setSecurityQuestion] = useState(""); 
   const [correctSecurityAnswer, setCorrectSecurityAnswer] = useState(""); 
   const navigate = useNavigate(); 
+  const { setUserLoggedIn } = useAuth(); 
 
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
@@ -76,7 +78,8 @@ const LoginForm = () => {
           
           const token = response.data.body.token 
           if (token) {
-            localStorage.setItem("token", token);
+            setUserLoggedIn(token);
+            // localStorage.setItem("token", token);
             toast.success("Login successful!");
             navigate("/home"); 
           } else {
