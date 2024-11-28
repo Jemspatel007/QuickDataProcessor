@@ -63,18 +63,18 @@ const FeedbackPage = () => {
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-4 py-2 text-left">Reference ID</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Name</th> {/* Added Name Column */}
                   <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Sentiment</th> {/* New Column */}
+                  <th className="border border-gray-300 px-4 py-2 text-left">Sentiment</th>
                 </tr>
               </thead>
               <tbody>
                 {feedbacks.map((feedback) => (
                   <tr key={feedback.id}>
                     <td className="border border-gray-300 px-4 py-2">{feedback.referenceId}</td>
+                    <td className="border border-gray-300 px-4 py-2">{feedback.name}</td> {/* Display Name */}
                     <td className="border border-gray-300 px-4 py-2">{feedback.description}</td>
-                    <td className="border border-gray-300 px-4 py-2 capitalize">
-                      {feedback.sentiment} {/* Display sentiment value */}
-                    </td>
+                    <td className="border border-gray-300 px-4 py-2 capitalize">{feedback.sentiment}</td>
                   </tr>
                 ))}
               </tbody>
