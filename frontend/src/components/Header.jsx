@@ -30,6 +30,10 @@ const Header = () => {
 
       if (response.ok) {
         localStorage.removeItem("token");
+        localStorage.removeItem("name");
+        localStorage.removeItem("role");
+        localStorage.removeItem("userEmail");
+
         navigate("/login");
       } else {
         console.error("Logout failed:", data.message || "Unknown error");

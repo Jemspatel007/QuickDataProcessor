@@ -7,7 +7,15 @@ const FeedbackForm = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const feedbackData = { referenceId, description };
+    // Retrieve name from local storage
+    const name = localStorage.getItem("name");
+    if (!name) {
+      alert("User name is not available in local storage. Please log in first.");
+      return;
+    }
+
+    // Include name in the feedback data
+    const feedbackData = { referenceId, description, name };
 
     try {
       const response = await fetch(
@@ -26,6 +34,7 @@ const FeedbackForm = ({ onClose }) => {
 
         // Close the feedback form
         if (onClose) onClose();
+        // alert("Feedback submitted successfully!");
       } else {
         alert("Failed to submit feedback. Please try again.");
       }

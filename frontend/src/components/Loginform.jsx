@@ -75,10 +75,12 @@ const LoginForm = () => {
         try {
           const response = await axios.post(apiUrl, { email, password });
           
-          const token = response.data.body.token 
+          const { token, username, role } = response.data.body;
           if (token) {
             setUserLoggedIn(token);
             await triggerLoginCountCloudFunction(email);
+            localStorage.setItem("name", username);
+            localStorage.setItem("role", role);
             // localStorage.setItem("token", token);
             console.log("dsfsdf",setUserLoggedIn)
             console.log("token",token)
