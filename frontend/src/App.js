@@ -1,17 +1,14 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Homepage from "./pages/Hompage";
 import LoginPage from "./pages/Loginpage";
-import DataProcessingpage1 from "./pages/DataProcessingpage1"
+import DataProcessingpage1 from "./pages/DataProcessingpage1";
 import DataProcessingPage2 from "./pages/DataProcessingPage2";
 import DataProcessingPage3 from "./pages/DataProcessingPage3";
 import FeedbackPage from "./pages/FeedbackPage";
-import ProtectedRoute from "./utils/ProtectedRoute"; // Import the ProtectedRoute
-import { AuthProvider } from "./context/AuthContext"; // Import the AuthContext provider
+import StatsDashboard from  "./components/StatsDashboard"
+import ProtectedRoute from "./utils/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
 import "./index.css";
 
 function App() {
@@ -37,7 +34,7 @@ function App() {
               path="/dataprocessing1"
               element={
                 <ProtectedRoute>
-                  <DataProcessingpage1/>
+                  <DataProcessingpage1 />
                 </ProtectedRoute>
               }
             />
@@ -45,23 +42,32 @@ function App() {
               path="/dataprocessing2"
               element={
                 <ProtectedRoute>
-                  <DataProcessingPage2/>
+                  <DataProcessingPage2 />
                 </ProtectedRoute>
               }
             />
-             <Route
+            <Route
               path="/dataprocessing3"
               element={
                 <ProtectedRoute>
-                  <DataProcessingPage3/>
+                  <DataProcessingPage3 />
                 </ProtectedRoute>
               }
             />
-                        <Route
+            <Route
               path="/feedback"
               element={
                 <ProtectedRoute>
                   <FeedbackPage />
+                </ProtectedRoute>
+              }
+            />
+            {/* Admin-only route */}
+            <Route
+              path="/user-login-stats"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <StatsDashboard />
                 </ProtectedRoute>
               }
             />
