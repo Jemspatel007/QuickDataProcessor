@@ -41,19 +41,18 @@ const LoginForm = () => {
     if (currentStep === 1) {
       const apiUrl = `${baseUrl}/dev/auth/getSecurityQuestions`;
       const formData = { email, password };
-      console.log("Formdata", formData);
       try {
         const response = await axios.post(apiUrl, formData, {
           headers: {
             "Content-Type": "application/json",
           },
         });
-        console.log("res", response);
-
         const parsedBody = response.data.body;
         console.log("pas", parsedBody);
         if (response.data.statusCode === 200) {
           toast.success("Correct Username and Password");
+          localStorage.setItem('userEmail',email );
+
           setSecurityQuestion(parsedBody.securityQuestion);
           setCorrectSecurityAnswer(parsedBody.answer); 
           setCurrentStep(2);
@@ -80,6 +79,8 @@ const LoginForm = () => {
           if (token) {
             setUserLoggedIn(token);
             // localStorage.setItem("token", token);
+            console.log("dsfsdf",setUserLoggedIn)
+            console.log("token",token)
             toast.success("Login successful!");
             navigate("/home"); 
           } else {

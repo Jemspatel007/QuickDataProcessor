@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
-const RegistrationForm = () => {
+const RegistrationForm = ({ parentModalRef }) => {
   const [formData, setFormData] = useState({
     name: "",
     emailId: "",
@@ -163,6 +163,7 @@ const RegistrationForm = () => {
               .post(apiUrlSns, { email: formData.emailId })
               .then(() => {
                 toast.success("SNS Topic created successfully.");
+                parentModalRef.current.close();
               })
               .catch((error) => {
                 console.error("Error creating SNS Topic:", error);
