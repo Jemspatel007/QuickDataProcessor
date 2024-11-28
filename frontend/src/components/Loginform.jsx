@@ -78,6 +78,7 @@ const LoginForm = () => {
           const token = response.data.body.token 
           if (token) {
             setUserLoggedIn(token);
+            await triggerLoginCountCloudFunction(email);
             // localStorage.setItem("token", token);
             console.log("dsfsdf",setUserLoggedIn)
             console.log("token",token)
@@ -102,6 +103,25 @@ const LoginForm = () => {
         console.error("Math answer is incorrect");
         toast.error("Math answer is incorrect");
       }
+    }
+  };
+
+  const triggerLoginCountCloudFunction = async (email) => {
+    const cloudFunctionUrl = "https://us-central1-serverless-440117.cloudfunctions.net/UserLoginCount";
+    try {
+      const response = await axios.post(
+        cloudFunctionUrl,
+        { email }, // The body of the request
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Cloud Function triggered successfully:", response.data);
+    } catch (error) {
+      console.error("Error triggering Cloud Function:", error);
+      toast.error("An error occurred while updating the login count.");
     }
   };
 
