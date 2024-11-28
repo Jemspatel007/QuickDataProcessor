@@ -51,6 +51,8 @@ const LoginForm = () => {
         console.log("pas", parsedBody);
         if (response.data.statusCode === 200) {
           toast.success("Correct Username and Password");
+          localStorage.setItem('userEmail',email );
+
           setSecurityQuestion(parsedBody.securityQuestion);
           setCorrectSecurityAnswer(parsedBody.answer); 
           setCurrentStep(2);

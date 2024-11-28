@@ -6,6 +6,9 @@ import {
 } from "react-router-dom";
 import Homepage from "./pages/Hompage";
 import LoginPage from "./pages/Loginpage";
+import DataProcessingpage1 from "./pages/DataProcessingpage1"
+import DataProcessingPage2 from "./pages/DataProcessingPage2";
+import DataProcessingPage3 from "./pages/DataProcessingPage3";
 import ProtectedRoute from "./utils/ProtectedRoute"; // Import the ProtectedRoute
 import { AuthProvider } from "./context/AuthContext"; // Import the AuthContext provider
 import "./index.css";
@@ -26,6 +29,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Homepage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dataprocessing1"
+              element={
+                <ProtectedRoute>
+                  <DataProcessingpage1/>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dataprocessing2"
+              element={
+                <ProtectedRoute>
+                  <DataProcessingPage2/>
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/dataprocessing3"
+              element={
+                <ProtectedRoute>
+                  <DataProcessingPage3/>
                 </ProtectedRoute>
               }
             />
