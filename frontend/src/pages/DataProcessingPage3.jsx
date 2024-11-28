@@ -18,6 +18,16 @@ const DataProcessingPage3 = () => {
     }
   };
 
+  // Convert file to base64 string
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result.split(',')[1]); // Get base64 part after data:image/png;base64,
+      reader.onerror = reject;
+      reader.readAsDataURL(file); // Read file as base64
+    });
+  };
+
   // Handle file upload and processing
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,17 +42,19 @@ const DataProcessingPage3 = () => {
       setIsProcessing(true);
 
       try {
-        // Read file content as text
-        const fileContent = await file.text(); // Read file as text
+        // Convert file to base64
+        const base64FileContent = await convertToBase64(file);
+        console.log("base64FileContent", base64FileContent);
 
-        // Create payload
+        // Create payload with base64 content
         const payload = {
           email: email,
-          body: fileContent, // Send plain text content
+          body: base64FileContent, // Send base64 encoded content
         };
 
         // API endpoint to process the file and generate word cloud
-        const apiUrl = 'https://your-lambda-endpoint-url.com/generate-wordcloud'; // Replace with your Lambda endpoint
+        const apiUrl = 'https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/uploadtos3dp3'; // Replace with your Lambda endpoint
+        console.log("payload", payload);
 
         // Send payload to the backend
         const response = await fetch(apiUrl, {
@@ -53,14 +65,15 @@ const DataProcessingPage3 = () => {
           body: JSON.stringify(payload),
         });
 
+        console.log("res", response);
         if (response.ok) {
           setIsProcessing(false);
           const result = await response.json();
           alert(`Word Cloud Generated!`);
 
           // Redirect to Looker Studio URL with the generated word cloud data
-          const lookerStudioUrl = `https://datastudio.google.com/reporting/your-report-id?params=${result.wordCloudData}`;
-          window.open(lookerStudioUrl, '_blank');
+          //const lookerStudioUrl = `https://datastudio.google.com/reporting/your-report-id?params=${result.wordCloudData}`;
+          //window.open(lookerStudioUrl, '_blank');
         } else {
           setIsProcessing(false);
           const errorMessage = await response.text();
