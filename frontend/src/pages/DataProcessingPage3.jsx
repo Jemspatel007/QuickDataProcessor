@@ -8,6 +8,10 @@ const DataProcessingPage3 = () => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processedFiles, setProcessedFiles] = useState([]);
+
+  const reportBaseUrl =
+    'https://lookerstudio.google.com/embed/reporting/1d6a3eee-e04e-4064-bd6d-7f9dbe0a8ef4/page/PB2WE';
 
   // Handle file selection
   const handleFileChange = (e) => {
@@ -31,8 +35,7 @@ const DataProcessingPage3 = () => {
   // Handle file upload and processing
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const email = localStorage.getItem('userEmail'); // Get email from localStorage
+    const email = localStorage.getItem('userEmail');
     if (!email) {
       alert('Email is missing. Please log in first.');
       return;
@@ -42,21 +45,14 @@ const DataProcessingPage3 = () => {
       setIsProcessing(true);
 
       try {
-        // Convert file to base64
         const base64FileContent = await convertToBase64(file);
-        console.log("base64FileContent", base64FileContent);
-
-        // Create payload with base64 content
         const payload = {
-          email: email,
-          body: base64FileContent, // Send base64 encoded content
+          email,
+          body: base64FileContent,
         };
 
-        // API endpoint to process the file and generate word cloud
-        const apiUrl = 'https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/uploadtos3dp3'; // Replace with your Lambda endpoint
-        console.log("payload", payload);
-
-        // Send payload to the backend
+        const apiUrl =
+          'https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/uploadtos3dp3';
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
@@ -65,15 +61,9 @@ const DataProcessingPage3 = () => {
           body: JSON.stringify(payload),
         });
 
-        console.log("res", response);
         if (response.ok) {
           setIsProcessing(false);
-          const result = await response.json();
-          alert(`Word Cloud Generated!`);
-
-          // Redirect to Looker Studio URL with the generated word cloud data
-          //const lookerStudioUrl = `https://datastudio.google.com/reporting/your-report-id?params=${result.wordCloudData}`;
-          //window.open(lookerStudioUrl, '_blank');
+          alert('Word Cloud Generated!');
         } else {
           setIsProcessing(false);
           const errorMessage = await response.text();
@@ -89,6 +79,67 @@ const DataProcessingPage3 = () => {
     }
   };
 
+  // Fetch processed files from the backend
+  const fetchProcessedFiles = async () => {
+    const email = localStorage.getItem('userEmail');
+    if (!email) {
+      alert('Email is missing. Please log in first.');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        'https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/ProcessedData/getDP3Data',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const parsedData = JSON.parse(data.body);
+        setProcessedFiles(parsedData);
+      } else {
+        const errorMessage = await response.text();
+        alert(`Error fetching processed files: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while fetching processed files.');
+    }
+  };
+
+  // Open Looker Studio report in a new tab
+  const handleOpenLookerStudio = () => {
+    const email = localStorage.getItem('userEmail');
+    if (!email) {
+      alert('Email is missing. Please log in first.');
+      return;
+    }
+
+    const params = {
+      'ds0.email_parameter': email,
+    };
+    const paramsAsString = JSON.stringify(params);
+    const encodedParams = encodeURIComponent(paramsAsString);
+
+    const reportUrl = `${reportBaseUrl}?params=${encodedParams}`;
+    const newTab = window.open();
+    newTab.document.body.innerHTML = `
+      <iframe 
+        src="${reportUrl}" 
+        width="100%" 
+        height="100%" 
+        frameborder="0" 
+        style="border: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
+      </iframe>
+    `;
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
@@ -99,7 +150,6 @@ const DataProcessingPage3 = () => {
             Word Cloud Generation
           </h1>
 
-          {/* File Upload Section */}
           <div className="bg-white shadow-xl rounded-lg p-6 max-w-3xl mx-auto flex flex-col items-center text-center hover:shadow-2xl transition">
             <FontAwesomeIcon icon={faChartLine} size="3x" className="text-purple-500 mb-4" />
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
@@ -107,7 +157,6 @@ const DataProcessingPage3 = () => {
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* File Upload Area */}
               <div className="border-4 border-dashed border-purple-500 p-10 rounded-xl flex justify-center items-center">
                 <label htmlFor="file-upload" className="text-center text-gray-600 cursor-pointer w-full">
                   <input
@@ -118,12 +167,8 @@ const DataProcessingPage3 = () => {
                     onChange={handleFileChange}
                   />
                   <div className="space-y-4">
-                    <p className="text-lg font-semibold">
-                      Drag & Drop or Click to Browse
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Only .txt files are accepted
-                    </p>
+                    <p className="text-lg font-semibold">Drag & Drop or Click to Browse</p>
+                    <p className="text-sm text-gray-500">Only .txt files are accepted</p>
                     {fileName && (
                       <p className="mt-2 text-gray-700">Selected file: {fileName}</p>
                     )}
@@ -131,7 +176,6 @@ const DataProcessingPage3 = () => {
                 </label>
               </div>
 
-              {/* Upload Button */}
               <div className="text-center">
                 <button
                   type="submit"
@@ -144,12 +188,48 @@ const DataProcessingPage3 = () => {
                 </button>
               </div>
             </form>
-
-            {/* Additional Notes */}
-            <p className="text-gray-600 text-sm mt-4">
-              Upload a valid .txt file to generate a Word Cloud. The Word Cloud will be displayed in GCP Looker Studio.
-            </p>
           </div>
+
+          <div className="mt-8 text-center">
+            <button
+              onClick={fetchProcessedFiles}
+              className="bg-violet-500 hover:bg-violet-600 text-white px-6 py-2 rounded-full shadow-lg"
+            >
+              Get Processed Files
+            </button>
+          </div>
+
+          <div className="mt-8 text-center">
+            <button
+              onClick={handleOpenLookerStudio}
+              className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full shadow-lg"
+            >
+              Open Looker Studio Report
+            </button>
+          </div>
+
+          {processedFiles.length > 0 && (
+            <div className="mt-8 overflow-x-auto bg-white shadow-xl rounded-lg p-6">
+              <table className="min-w-full table-auto">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="px-4 py-2 text-left text-sm font-semibold">File ID</th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold">S3 Location</th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {processedFiles.map((file, index) => (
+                    <tr key={index} className="border-t">
+                      <td className="px-4 py-2 text-sm">{file.file_id}</td>
+                      <td className="px-4 py-2 text-sm">{file.s3_location}</td>
+                      <td className="px-4 py-2 text-sm">{file.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
 

@@ -8,6 +8,8 @@ const DataProcessingPage1 = () => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processedFile, setProcessedFile] = useState(null); // State to store processed file info
+  const [error, setError] = useState(''); // State for error handling
 
   // Handle file selection
   const handleFileChange = (e) => {
@@ -35,7 +37,7 @@ const DataProcessingPage1 = () => {
         // Read file content as base64
         const fileContent = await file.text(); // Read file as text
         const base64Content = btoa(fileContent); // Convert to base64
-        console.log("base64content",base64Content)
+        console.log("base64content", base64Content);
         // Create payload
         const payload = {
           email: email,
@@ -53,7 +55,7 @@ const DataProcessingPage1 = () => {
           },
           body: JSON.stringify(payload),
         });
-        console.log("response",response)
+        console.log("response", response);
         if (response.ok) {
           setIsProcessing(false);
           alert('File uploaded and processing started!');
@@ -69,6 +71,48 @@ const DataProcessingPage1 = () => {
       }
     } else {
       alert('Please select a file to upload');
+    }
+  };
+
+  // Function to handle fetching processed files
+  const handleProcessedFileFetch = async () => {
+    const email = localStorage.getItem('userEmail'); // Get email from localStorage
+    if (!email) {
+      alert('Email is missing. Please log in first.');
+      return;
+    }
+
+    try {
+      const response = await fetch('https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/ProcessedData/getDP1Data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("API Response Data:", data); // Log the response data
+
+        // Parse the 'body' string to an actual array
+        const processedFiles = JSON.parse(data.body);
+
+        if (Array.isArray(processedFiles) && processedFiles.length > 0) {
+          // Successfully fetched processed data
+          setProcessedFile(processedFiles); // Update the state with the processed data
+          setError(''); // Clear any previous errors
+        } else {
+          // No processed file found
+          setProcessedFile(null);
+          setError('No processed file found.');
+        }
+      } else {
+        setError('Failed to fetch processed file data');
+      }
+    } catch (error) {
+      console.error('Error fetching processed file data:', error);
+      setError('An error occurred while fetching the processed file.');
     }
   };
 
@@ -126,6 +170,47 @@ const DataProcessingPage1 = () => {
             <p className="text-center text-gray-600 text-sm">
               Please upload a valid JSON file for conversion. You will receive a CSV once the conversion is completed.
             </p>
+          </div>
+
+          {/* Processed File Section */}
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={handleProcessedFileFetch}
+              className="bg-indigo-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-indigo-700"
+            >
+              Get Processed File
+            </button>
+          </div>
+
+          {/* Processed File Display */}
+          <div className="mt-8 max-w-3xl mx-auto">
+            {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+            {processedFile && (
+              <div className="overflow-x-auto bg-white shadow-md rounded-md">
+                <table className="min-w-full table-auto text-center">
+                  <thead className="bg-gray-300 text-gray-800">
+                    <tr>
+                      <th className="px-6 py-3">File ID</th>
+                      <th className="px-6 py-3">S3 Output</th>
+                      <th className="px-6 py-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {processedFile.map((file, index) => (
+                      <tr key={index} className="border-b">
+                        <td className="px-6 py-4">{file.file_id}</td>
+                        <td className="px-6 py-4">
+                          <a href={file.s3_output} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">
+                            {file.s3_output}
+                          </a>
+                        </td>
+                        <td className="px-6 py-4">{file.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       </div>
