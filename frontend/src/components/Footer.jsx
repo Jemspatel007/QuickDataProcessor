@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Footer() {
   const location = useLocation(); // Get the current route
@@ -7,7 +7,7 @@ function Footer() {
   const [showBot, setShowBot] = useState(false);
 
   const goToFeedbackPage = () => {
-    navigate('/feedback'); // Navigate to the Feedback page
+    navigate("/feedback"); // Navigate to the Feedback page
   };
 
   const toggleBot = () => {
@@ -16,6 +16,10 @@ function Footer() {
 
   const closeBot = () => {
     setShowBot(false);
+  };
+
+  const goToPubSubChatPage = () => {
+    navigate("/pubsub-chat"); // Navigate to the PubSubChatPage
   };
 
   return (
@@ -31,7 +35,7 @@ function Footer() {
 
       {/* Right Section: Conditionally render buttons */}
       <div className="flex space-x-4">
-        {location.pathname !== '/feedback' && (
+        {location.pathname !== "/feedback" && (
           <button
             onClick={goToFeedbackPage}
             className="bg-teal-500 text-gray-900 px-6 py-2 rounded-lg hover:bg-teal-600 focus:outline-none"
@@ -46,6 +50,14 @@ function Footer() {
           className="bg-teal-500 text-gray-900 px-6 py-2 rounded-lg hover:bg-teal-600 focus:outline-none"
         >
           Ask Me Anything
+        </button>
+
+        {/* Navigate to PubSubChatPage */}
+        <button
+          onClick={goToPubSubChatPage}
+          className="bg-teal-500 text-gray-900 px-6 py-2 rounded-lg hover:bg-teal-600 focus:outline-none"
+        >
+          Chat with Agent
         </button>
       </div>
 
@@ -65,7 +77,7 @@ function Footer() {
             width="350"
             height="430"
             src="https://console.dialogflow.com/api-client/demo/embedded/9d53a214-e4d0-462e-8403-9277d059e667"
-            style={{ border: 'none' }}
+            style={{ border: "none" }}
           />
         </div>
       )}
