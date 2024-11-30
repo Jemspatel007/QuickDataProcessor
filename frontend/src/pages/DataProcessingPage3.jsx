@@ -52,7 +52,7 @@ const DataProcessingPage3 = () => {
         };
 
         const apiUrl =
-          'https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/uploadtos3dp3';
+          'https://c71c3c65hh.execute-api.us-east-1.amazonaws.com/dev/dp3';
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
@@ -89,7 +89,7 @@ const DataProcessingPage3 = () => {
 
     try {
       const response = await fetch(
-        'https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/ProcessedData/getDP3Data',
+        'https://c71c3c65hh.execute-api.us-east-1.amazonaws.com/dev/ProcessedData/getDP3Data',
         {
           method: 'POST',
           headers: {
