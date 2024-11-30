@@ -1,13 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function Footer() {
-  const location = useLocation(); // Get the current route
+  const location = useLocation(); 
   const navigate = useNavigate();
   const [showBot, setShowBot] = useState(false);
+  const [chatButtonText, setChatButtonText] = useState("Chat"); 
+  useEffect(() => {
+    const role = localStorage.getItem("role"); 
+    if (role === "Admin") {
+      setChatButtonText("Chat with Customer");
+    } else if (role === "Customer") {
+      setChatButtonText("Chat with Agent");
+    } else {
+      setChatButtonText("Chat");
+    }
+  }, []);
 
   const goToFeedbackPage = () => {
-    navigate("/feedback"); // Navigate to the Feedback page
+    navigate("/feedback");
   };
 
   const toggleBot = () => {
@@ -19,7 +30,7 @@ function Footer() {
   };
 
   const goToPubSubChatPage = () => {
-    navigate("/pubsub-chat"); // Navigate to the PubSubChatPage
+    navigate("/pubsub-chat"); 
   };
 
   return (
@@ -57,7 +68,7 @@ function Footer() {
           onClick={goToPubSubChatPage}
           className="bg-teal-500 text-gray-900 px-6 py-2 rounded-lg hover:bg-teal-600 focus:outline-none"
         >
-          Chat with Agent
+          {chatButtonText}
         </button>
       </div>
 
