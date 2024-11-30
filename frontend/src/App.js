@@ -6,7 +6,9 @@ import DataProcessingpage1 from "./pages/DataProcessingpage1";
 import DataProcessingPage2 from "./pages/DataProcessingPage2";
 import DataProcessingPage3 from "./pages/DataProcessingPage3";
 import FeedbackPage from "./pages/FeedbackPage";
-import StatsDashboard from  "./components/StatsDashboard"
+import StatsDashboard from "./components/StatsDashboard";
+import UserConcerns from "./pages/UserConcerns";
+import PubSubChatPage from "./pages/PubSubChatPage"; // Import PubSubChatPage
 import ProtectedRoute from "./utils/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import "./index.css";
@@ -68,6 +70,23 @@ function App() {
               element={
                 <ProtectedRoute adminOnly={true}>
                   <StatsDashboard />
+                </ProtectedRoute>
+              }
+            />
+            {/* PubSub Chat Page Route */}
+            <Route
+              path="/pubsub-chat"
+              element={
+                <ProtectedRoute>
+                  <PubSubChatPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/user-concerns"
+              element={
+                <ProtectedRoute>
+                  <UserConcerns />
                 </ProtectedRoute>
               }
             />
