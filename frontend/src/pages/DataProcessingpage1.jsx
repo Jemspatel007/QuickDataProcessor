@@ -45,7 +45,7 @@ const DataProcessingPage1 = () => {
         };
 
         // API endpoint
-        const apiUrl = 'https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/uploaddp1';
+        const apiUrl = 'https://c71c3c65hh.execute-api.us-east-1.amazonaws.com/dev/dp1';
 
         // Send payload to the backend
         const response = await fetch(apiUrl, {
@@ -83,7 +83,7 @@ const DataProcessingPage1 = () => {
     }
 
     try {
-      const response = await fetch('https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/ProcessedData/getDP1Data', {
+      const response = await fetch('https://c71c3c65hh.execute-api.us-east-1.amazonaws.com/dev/ProcessedData/getDP1Data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

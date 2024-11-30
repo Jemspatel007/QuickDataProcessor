@@ -54,7 +54,7 @@ const DataProcessingPage2 = () => {
         };
 
         // API endpoint
-        const apiUrl = 'https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/uploaddp2'; // Replace with your Lambda endpoint
+        const apiUrl = 'https://c71c3c65hh.execute-api.us-east-1.amazonaws.com/dev/dp2'; // Replace with your Lambda endpoint
 
         // Send payload to the backend
         const response = await fetch(apiUrl, {
@@ -93,7 +93,7 @@ const DataProcessingPage2 = () => {
     }
 
     try {
-      const response = await fetch('https://6mbz407i73.execute-api.us-east-1.amazonaws.com/dev/ProcessedData/getDP2Data', {
+      const response = await fetch('https://c71c3c65hh.execute-api.us-east-1.amazonaws.com/dev/ProcessedData/getDP2Data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
