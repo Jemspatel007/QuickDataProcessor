@@ -34,7 +34,7 @@ function Footer() {
   };
 
   return (
-    <footer className="footer p-10 bg-gray-900 text-gray-300 flex justify-between items-center relative">
+    <footer className="footer p-10 bg-neutral text-neutral-content flex justify-between items-center relative">
       {/* Left Section */}
       <div>
         <p>
