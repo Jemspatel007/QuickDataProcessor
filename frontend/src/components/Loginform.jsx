@@ -77,6 +77,7 @@ const LoginForm = () => {
           
           const { token, username, role } = response.data.body;
           if (token) {
+            localStorage.removeItem("processedFiles");
             setUserLoggedIn(token);
             await triggerLoginCountCloudFunction(email);
             localStorage.setItem("name", username);

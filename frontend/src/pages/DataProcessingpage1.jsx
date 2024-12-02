@@ -10,7 +10,9 @@ const DataProcessingPage1 = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState(null); // State to store processed file info
   const [error, setError] = useState(''); // State for error handling
-
+  const [processedFiles, setProcessedFiles] = useState(
+    parseInt(localStorage.getItem("processedFiles")) || 0
+  );
   // Handle file selection
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -19,17 +21,13 @@ const DataProcessingPage1 = () => {
       setFileName(selectedFile.name);
     }
   };
-
+  const token = localStorage.getItem("token");
   // Handle file upload and processing
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const email = localStorage.getItem('userEmail'); // Get email from localStorage
-    if (!email) {
-      alert('Email is missing. Please log in first.');
-      return;
-    }
-
+    const email = token ? localStorage.getItem('userEmail') : "";
+    // Get email from localStorage
+   
     if (file) {
       setIsProcessing(true);
 
@@ -43,7 +41,10 @@ const DataProcessingPage1 = () => {
           email: email,
           body: base64Content,
         };
-
+        if (processedFiles >= 2) {
+          alert("Guest users can only process up to 2 files.");
+          return;
+        }
         // API endpoint
         const apiUrl = 'https://c71c3c65hh.execute-api.us-east-1.amazonaws.com/dev/dp1';
 
@@ -55,8 +56,14 @@ const DataProcessingPage1 = () => {
           },
           body: JSON.stringify(payload),
         });
+     
         console.log("response", response);
         if (response.ok) {
+          if(!token)
+          {
+            localStorage.setItem("processedFiles", processedFiles + 1);
+            setProcessedFiles(processedFiles + 1);
+          }
           setIsProcessing(false);
           alert('File uploaded and processing started!');
         } else {
@@ -76,12 +83,9 @@ const DataProcessingPage1 = () => {
 
   // Function to handle fetching processed files
   const handleProcessedFileFetch = async () => {
-    const email = localStorage.getItem('userEmail'); // Get email from localStorage
-    if (!email) {
-      alert('Email is missing. Please log in first.');
-      return;
-    }
-
+    
+  
+    const email = token ? localStorage.getItem('userEmail') : "";
     try {
       const response = await fetch('https://c71c3c65hh.execute-api.us-east-1.amazonaws.com/dev/ProcessedData/getDP1Data', {
         method: 'POST',
@@ -94,7 +98,7 @@ const DataProcessingPage1 = () => {
       if (response.ok) {
         const data = await response.json();
         console.log("API Response Data:", data); // Log the response data
-
+        
         // Parse the 'body' string to an actual array
         const processedFiles = JSON.parse(data.body);
 
@@ -118,7 +122,10 @@ const DataProcessingPage1 = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
-      <Header />
+         {token && (
+          <Header />
+      )}
+     
 
       <div className="flex-1 py-12 bg-gray-50">
         <div className="container mx-auto px-6 md:px-12">
@@ -173,14 +180,27 @@ const DataProcessingPage1 = () => {
           </div>
 
           {/* Processed File Section */}
-          <div className="mt-8 flex justify-center">
-            <button
-              onClick={handleProcessedFileFetch}
-              className="bg-indigo-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-indigo-700"
-            >
-              Get Processed File
-            </button>
-          </div>
+          {token && (
+           <div className="mt-8 flex justify-center">
+           <button
+             onClick={handleProcessedFileFetch}
+             className="bg-indigo-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-indigo-700"
+           >
+             Get Processed File
+           </button>
+         </div>
+          )}
+                  <div className="flex items-center justify-center mt-10">
+  {token ? (
+    <p />
+  ) : (
+    
+    <p className="text-center text-lg ">
+      Please log in to access the result.
+    </p>
+
+  )}
+     </div>
 
           {/* Processed File Display */}
           <div className="mt-8 max-w-3xl mx-auto">
@@ -214,8 +234,9 @@ const DataProcessingPage1 = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
+      {token && (
+          <Footer />
+      )}
     </div>
   );
 };

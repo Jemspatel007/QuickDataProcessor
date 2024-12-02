@@ -22,7 +22,12 @@ function App() {
             {/* Public routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<LoginPage />} />
-
+            <Route
+              path="/dataprocessing"
+              element={
+                  <DataProcessingpage1 />
+              }
+            />
             {/* Protected routes */}
             <Route
               path="/home"
