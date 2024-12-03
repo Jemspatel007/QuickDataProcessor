@@ -158,7 +158,7 @@ const RegistrationForm = ({ parentModalRef }) => {
           const parsedBody = JSON.parse(response.data.body);
           if (response.data.statusCode === 201) {
             toast.success(parsedBody.message);
-            const apiUrlSns = `${baseUrl}/dev/sns/CreateTopic`;
+            const apiUrlSns = `https://c71c3c65hh.execute-api.us-east-1.amazonaws.com/dev/sns/CreateTopic`;
             axios
               .post(apiUrlSns, { email: formData.emailId })
               .then(() => {
