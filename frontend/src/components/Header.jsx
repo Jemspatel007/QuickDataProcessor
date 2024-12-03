@@ -1,6 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faSignOutAlt, faHome } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faSignOutAlt, faHome, faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -45,11 +45,11 @@ const Header = () => {
   };
 
   const navigateToHome = () => {
-    navigate("/home"); // Navigate to the homepage
+    navigate("/home");
   };
 
   const navigateToStats = () => {
-    navigate("/user-login-stats"); // Navigate to Looker Studio dashboard
+    navigate("/user-login-stats");
   };
 
   return (
@@ -72,7 +72,20 @@ const Header = () => {
         </div>
 
         {/* Right Section */}
-        <div className="flex-none">
+        <div className="flex-none flex items-center">
+          {/* Admin-only: Stats Button */}
+          {role === "Admin" && (
+            <button
+            onClick={navigateToStats}
+            className="btn btn-sm btn-outline btn-secondary mx-2 flex items-center"
+            style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
+            >
+              <FontAwesomeIcon icon={faChartLine} className="mr-2" />
+              View Stats
+            </button>
+          )}
+
+          {/* Profile Dropdown */}
           <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
