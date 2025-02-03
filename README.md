@@ -93,7 +93,7 @@ QuickDataProcessor (QDP) is a serverless, multi-cloud application designed to si
 ![Login & Register Example](./screenshorts/login.png)
 
 ### Dashboard Example:
-![Dashboard Example](./screenshorts/dashboard.png)
+![Dashboard Example](./screenshorts/dahboard.png)
 
 ### Data Processing:
 ![Data Processing](./screenshorts/dataprocessing.png)
